@@ -1,7 +1,11 @@
 package ris58h.tictactoe.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
+import ris58h.tictactoe.util.ByteArrayDeserializer;
+import ris58h.tictactoe.util.ByteArraySerializer;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +24,8 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
+    @JsonSerialize(using = ByteArraySerializer.class)
+    @JsonDeserialize(using = ByteArrayDeserializer.class)
     byte[] board;
 
     boolean finished = false;

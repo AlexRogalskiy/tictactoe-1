@@ -1,6 +1,7 @@
-package ris58h.tictactoe;
+package ris58h.tictactoe.util;
 
 import org.junit.Test;
+import ris58h.tictactoe.util.GameUtils;
 
 import static org.junit.Assert.*;
 

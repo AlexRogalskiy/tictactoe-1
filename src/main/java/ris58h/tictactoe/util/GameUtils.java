@@ -1,4 +1,4 @@
-package ris58h.tictactoe;
+package ris58h.tictactoe.util;
 
 import ris58h.tictactoe.domain.Game;
 
