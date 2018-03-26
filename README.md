@@ -14,5 +14,6 @@ For example
 will run the app with the DB persisted in file in the current directory.
 
 ## Interaction
-Execute `curl --data "dimension=3" localhost:8080/start` to start new 3x3 game.  
-Execute `curl --data "id=123&x=0&y=0" localhost:8080/move` to put an X on the top-left cell in the game with id=123.
+Execute `curl --data "dimension=3" localhost:8080/games` to start new 3x3 game.  
+Execute `curl localhost:8080/games/123` to get the game with id=123.  
+Execute `curl --data "x=0&y=0" localhost:8080/games/123/turn` to put an X on the top-left cell in the game with id=123.

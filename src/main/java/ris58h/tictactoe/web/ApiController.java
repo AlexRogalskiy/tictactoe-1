@@ -2,9 +2,7 @@ package ris58h.tictactoe.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ris58h.tictactoe.util.GameUtils;
 import ris58h.tictactoe.domain.Game;
 import ris58h.tictactoe.repository.GameRepository;
@@ -15,8 +13,8 @@ public class ApiController {
     @Autowired
     GameRepository gameRepository;
 
-    @PostMapping("/start")
-    Object start(@RequestParam(name = "dimension") int dimension) {
+    @PostMapping("/games")
+    Object newGame(@RequestParam(name = "dimension") int dimension) {
         if (dimension <= 0) {
             return ResponseEntity.badRequest().build();
         }
@@ -26,8 +24,13 @@ public class ApiController {
         return newGame;
     }
 
-    @PostMapping("/move")
-    Object move(@RequestParam(name = "id") long id,
+    @GetMapping("/games/{gameId}")
+    Game getGame(@PathVariable(name = "gameId") long id) {
+        return gameRepository.findById(id).orElseThrow(() -> new RuntimeException("Game not found!"));
+    }
+
+    @PostMapping("/games/{gameId}/turn")
+    Object takeTurn(@PathVariable(name = "gameId") long id,
               @RequestParam(name = "x") int x,
               @RequestParam(name = "y") int y) {
         if (x < 0 || y < 0) {
