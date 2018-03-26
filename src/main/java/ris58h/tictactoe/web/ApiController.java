@@ -16,7 +16,7 @@ public class ApiController {
     @PostMapping("/games")
     Object newGame(@RequestParam(name = "dimension") int dimension) {
         if (dimension <= 0) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Invalid dimension.");
         }
         Game newGame = new Game();
         newGame.setBoard(new byte[dimension * dimension]);
@@ -34,27 +34,27 @@ public class ApiController {
               @RequestParam(name = "x") int x,
               @RequestParam(name = "y") int y) {
         if (x < 0 || y < 0) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Invalid coordinates.");
         }
 
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Game not found!"));
 
         if (game.isFinished()) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Game is already finished.");
         }
 
         byte[] board = game.getBoard();
         int dimension = GameUtils.dimension(board);
 
         if (x >= dimension || y >= dimension) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Invalid coordinates.");
         }
 
         int offset = GameUtils.offset(dimension, x, y);
 
         if (board[offset] != Game.EMPTY) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Cell is not empty.");
         }
 
         board[offset] = Game.X;
