@@ -19,7 +19,7 @@ public class ApiController {
             return ResponseEntity.badRequest().body("Invalid dimension.");
         }
         Game newGame = new Game();
-        newGame.setBoard(new byte[dimension * dimension]);
+        newGame.board = new byte[dimension * dimension];
         newGame = gameRepository.save(newGame);
         return newGame;
     }
@@ -40,11 +40,11 @@ public class ApiController {
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Game not found!"));
 
-        if (game.isFinished()) {
+        if (game.finished) {
             return ResponseEntity.badRequest().body("Game is already finished.");
         }
 
-        byte[] board = game.getBoard();
+        byte[] board = game.board;
         int dimension = GameUtils.dimension(board);
 
         if (x >= dimension || y >= dimension) {
@@ -59,12 +59,12 @@ public class ApiController {
 
         board[offset] = Game.X;
         if (GameUtils.isFinished(board)) {
-            game.setFinished(true);
+            game.finished = true;
         } else {
             int computersTurnIndex = GameUtils.indexOf(board, Game.EMPTY);
             board[computersTurnIndex] = Game.O;
             if (GameUtils.isFinished(board)) {
-                game.setFinished(true);
+                game.finished = true;
             }
         }
 

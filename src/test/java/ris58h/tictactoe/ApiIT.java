@@ -50,11 +50,11 @@ public class ApiIT {
     public void shouldReturnGameById() {
         ResponseEntity<Game> startResponse = restTemplate.postForEntity(GAMES_URL, dimensionRequest(5), Game.class);
         assertThat(startResponse.getStatusCode(), equalTo(HttpStatus.OK));
-        long gameId = startResponse.getBody().getId();
+        long gameId = startResponse.getBody().id;
 
         ResponseEntity<Game> response = restTemplate.getForEntity(GAMES_URL + "/" + gameId, Game.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        assertThat(response.getBody().getId(), equalTo(gameId));
+        assertThat(response.getBody().id, equalTo(gameId));
     }
 
     @Test
@@ -64,31 +64,31 @@ public class ApiIT {
         ResponseEntity<Game> startResponse = restTemplate.postForEntity(GAMES_URL, dimensionRequest(dimension), Game.class);
         assertThat(startResponse.getStatusCode(), equalTo(HttpStatus.OK));
         Game startGame = startResponse.getBody();
-        assertThat(startGame.getBoard().length, equalTo(9));
-        assertFalse(startGame.isFinished());
+        assertThat(startGame.board.length, equalTo(9));
+        assertFalse(startGame.finished);
 
-        Long gameId = startGame.getId();
+        Long gameId = startGame.id;
 
         String turnUrl = turnUrl(gameId);
         HttpEntity<?> turnRequest = turnRequest(1, 2);
         ResponseEntity<Game> turnResponse = restTemplate.postForEntity(turnUrl, turnRequest, Game.class);
         assertThat(turnResponse.getStatusCode(), equalTo(HttpStatus.OK));
         Game game = turnResponse.getBody();
-        assertThat(game.getId(), equalTo(gameId));
-        assertThat(game.getBoard()[7], equalTo(Game.X));
-        assertTrue(GameUtils.indexOf(game.getBoard(), Game.O) >= 0);
-        assertFalse(game.isFinished());
+        assertThat(game.id, equalTo(gameId));
+        assertThat(game.board[7], equalTo(Game.X));
+        assertTrue(GameUtils.indexOf(game.board, Game.O) >= 0);
+        assertFalse(game.finished);
 
         ResponseEntity<String> duplicateTurnResponse = restTemplate.postForEntity(turnUrl, turnRequest, String.class);
         assertThat(duplicateTurnResponse.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
         assertThat(duplicateTurnResponse.getBody(), equalTo("Cell is not empty."));
 
         int turn = 1;
-        while (!game.isFinished()) {
+        while (!game.finished) {
             // There can't be more than d^2/2+1 turns.
             assertTrue(turn < (dimension * dimension) / 2 + 1);
 
-            int indexOfEmpty = GameUtils.indexOf(game.getBoard(), Game.EMPTY);
+            int indexOfEmpty = GameUtils.indexOf(game.board, Game.EMPTY);
             assertTrue(indexOfEmpty >= 0);
 
             int x = indexOfEmpty % dimension;
