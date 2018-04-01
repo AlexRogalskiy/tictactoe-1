@@ -18,7 +18,7 @@ public class GameUtilsTest {
     }
 
     @Test
-    public void testEffset() {
+    public void testOffset() {
         assertEquals(7, GameUtils.offset(3, 1, 2));
     }
 
