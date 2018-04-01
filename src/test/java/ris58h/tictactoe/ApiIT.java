@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import ris58h.tictactoe.domain.Game;
+import ris58h.tictactoe.domain.GameState;
 import ris58h.tictactoe.util.GameUtils;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -81,8 +82,8 @@ public class ApiIT {
         assertThat(turnResponse.getStatusCode(), equalTo(HttpStatus.OK));
         Game game = turnResponse.getBody();
         assertThat(game.id, equalTo(gameId));
-        assertThat(game.board[7], equalTo(Game.X));
-        assertTrue(GameUtils.indexOf(game.board, Game.O) >= 0);
+        assertThat(game.board[7], equalTo(GameState.X));
+        assertTrue(GameUtils.indexOf(game.board, GameState.O) >= 0);
         assertFalse(game.finished);
 
         ResponseEntity<String> duplicateTurnResponse = restTemplate.postForEntity(turnUrl, turnRequest, String.class);
@@ -94,7 +95,7 @@ public class ApiIT {
             // There can't be more than d^2/2+1 turns.
             assertTrue(turn < (dimension * dimension) / 2 + 1);
 
-            int indexOfEmpty = GameUtils.indexOf(game.board, Game.EMPTY);
+            int indexOfEmpty = GameUtils.indexOf(game.board, GameState.E);
             assertTrue(indexOfEmpty >= 0);
 
             int x = indexOfEmpty % dimension;

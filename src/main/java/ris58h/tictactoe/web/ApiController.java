@@ -3,6 +3,7 @@ package ris58h.tictactoe.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ris58h.tictactoe.domain.GameState;
 import ris58h.tictactoe.exception.GameNotFoundException;
 import ris58h.tictactoe.util.GameUtils;
 import ris58h.tictactoe.domain.Game;
@@ -54,16 +55,16 @@ public class ApiController {
 
         int offset = GameUtils.offset(dimension, x, y);
 
-        if (board[offset] != Game.EMPTY) {
+        if (board[offset] != GameState.E) {
             return ResponseEntity.badRequest().body("Cell is not empty.");
         }
 
-        board[offset] = Game.X;
+        board[offset] = GameState.X;
         if (GameUtils.isFinished(board)) {
             game.finished = true;
         } else {
-            int computersTurnIndex = GameUtils.indexOf(board, Game.EMPTY);
-            board[computersTurnIndex] = Game.O;
+            int computersTurnIndex = GameUtils.indexOf(board, GameState.E);
+            board[computersTurnIndex] = GameState.O;
             if (GameUtils.isFinished(board)) {
                 game.finished = true;
             }

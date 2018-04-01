@@ -1,44 +1,72 @@
 package ris58h.tictactoe.util;
 
 import org.junit.Test;
-import ris58h.tictactoe.util.GameUtils;
 
 import static org.junit.Assert.*;
+import static ris58h.tictactoe.domain.GameState.*;
 
 public class GameUtilsTest {
 
     @Test
     public void testDimension() {
-        byte[] board = new byte[] {0,0,0, 0,0,0, 0,0,0};
+        byte[] board = new byte[]{
+                E, E, E,
+                E, E, E,
+                E, E, E
+        };
         assertEquals(3, GameUtils.dimension(board));
     }
 
     @Test
-    public void testOffset() {
+    public void testEffset() {
         assertEquals(7, GameUtils.offset(3, 1, 2));
     }
 
     @Test
-    public void testIndexOf() {
-        byte[] board = new byte[] {0,0,0, 0,0,0, 1,0,0};
-        assertEquals(6, GameUtils.indexOf(board, (byte) 1));
+    public void testIndexEf() {
+        byte[] board = new byte[]{
+                E, E, E,
+                E, E, E,
+                X, E, E
+        };
+        assertEquals(6, GameUtils.indexOf(board, X));
     }
 
     @Test
     public void isFinished() {
-        byte[] nonFinishedBoard = new byte[] {0,0,0, 0,0,0, 1,0,0};
+        byte[] nonFinishedBoard = new byte[]{
+                E, E, E,
+                E, E, E,
+                X, E, E
+        };
         assertFalse(GameUtils.isFinished(nonFinishedBoard));
 
-        byte[] colFinishedBoard = new byte[] {1,0,0, 1,0,0, 1,0,0};
+        byte[] colFinishedBoard = new byte[]{
+                X, E, E,
+                X, E, E,
+                X, E, E
+        };
         assertTrue(GameUtils.isFinished(colFinishedBoard));
 
-        byte[] rowFinishedBoard = new byte[] {0,0,0, 1,1,1, 0,0,0};
+        byte[] rowFinishedBoard = new byte[]{
+                E, E, E,
+                X, X, X,
+                E, E, E
+        };
         assertTrue(GameUtils.isFinished(rowFinishedBoard));
 
-        byte[] diagonal1FinishedBoard = new byte[] {1,0,0, 0,1,0, 0,0,1};
+        byte[] diagonal1FinishedBoard = new byte[]{
+                X, E, E,
+                E, X, E,
+                E, E, X
+        };
         assertTrue(GameUtils.isFinished(diagonal1FinishedBoard));
 
-        byte[] diagonal2FinishedBoard = new byte[] {0,0,1, 0,1,0, 1,0,0};
+        byte[] diagonal2FinishedBoard = new byte[]{
+                E, E, X,
+                E, X, E,
+                X, E, E
+        };
         assertTrue(GameUtils.isFinished(diagonal2FinishedBoard));
     }
 }

@@ -1,6 +1,6 @@
 package ris58h.tictactoe.util;
 
-import ris58h.tictactoe.domain.Game;
+import ris58h.tictactoe.domain.GameState;
 
 public class GameUtils {
     public static int dimension(byte[] board) {
@@ -31,11 +31,11 @@ public class GameUtils {
                 return true;
             }
             byte d1v = board[offset(dimension, i, i)];
-            if (d1v == Game.EMPTY || d1 != d1v) {
+            if (d1v == GameState.E || d1 != d1v) {
                 d1finished = false;
             }
             byte d2v = board[offset(dimension, i, dimension - 1 - i)];
-            if (d2v == Game.EMPTY || d2 != d2v) {
+            if (d2v == GameState.E || d2 != d2v) {
                 d2finished = false;
             }
         }
@@ -45,7 +45,7 @@ public class GameUtils {
     private static boolean rowFinished(byte[] board, int rowIndex) {
         int dimension = dimension(board);
         byte state = board[offset(dimension, 0, rowIndex)];
-        if (state == Game.EMPTY) {
+        if (state == GameState.E) {
             return false;
         }
         for (int x = 1; x < dimension; x++) {
@@ -59,7 +59,7 @@ public class GameUtils {
     private static boolean columnFinished(byte[] board, int columnIndex) {
         int dimension = dimension(board);
         byte state = board[offset(dimension, columnIndex, 0)];
-        if (state == Game.EMPTY) {
+        if (state == GameState.E) {
             return false;
         }
         for (int y = 1; y < dimension; y++) {

@@ -12,10 +12,6 @@ import javax.persistence.Id;
 
 @Entity
 public class Game {
-    public static byte EMPTY = 0;
-    public static byte X = 1;
-    public static byte O = 2;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long id;
