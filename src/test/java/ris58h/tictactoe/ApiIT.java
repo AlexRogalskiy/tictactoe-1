@@ -27,6 +27,12 @@ public class ApiIT {
     private static final String GAMES_URL = "/games";
 
     @Test
+    public void shouldFailForUnknownGameId() {
+        ResponseEntity<String> response = restTemplate.getForEntity(gameUrl(0), String.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
     public void startShouldFailIfNoParamsProvided() {
         ResponseEntity<String> response = restTemplate.postForEntity(GAMES_URL, null, String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
@@ -52,7 +58,7 @@ public class ApiIT {
         assertThat(startResponse.getStatusCode(), equalTo(HttpStatus.OK));
         long gameId = startResponse.getBody().id;
 
-        ResponseEntity<Game> response = restTemplate.getForEntity(GAMES_URL + "/" + gameId, Game.class);
+        ResponseEntity<Game> response = restTemplate.getForEntity(gameUrl(gameId), Game.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         assertThat(response.getBody().id, equalTo(gameId));
     }

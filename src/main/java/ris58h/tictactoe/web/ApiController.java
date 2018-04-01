@@ -3,6 +3,7 @@ package ris58h.tictactoe.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ris58h.tictactoe.exception.GameNotFoundException;
 import ris58h.tictactoe.util.GameUtils;
 import ris58h.tictactoe.domain.Game;
 import ris58h.tictactoe.repository.GameRepository;
@@ -26,7 +27,7 @@ public class ApiController {
 
     @GetMapping("/games/{gameId}")
     Game getGame(@PathVariable(name = "gameId") long id) {
-        return gameRepository.findById(id).orElseThrow(() -> new RuntimeException("Game not found!"));
+        return gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
     }
 
     @PostMapping("/games/{gameId}/turn")
@@ -38,7 +39,7 @@ public class ApiController {
         }
 
         Game game = gameRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Game not found!"));
+                .orElseThrow(() -> new GameNotFoundException(id));
 
         if (game.finished) {
             return ResponseEntity.badRequest().body("Game is already finished.");
@@ -71,5 +72,10 @@ public class ApiController {
         game = gameRepository.save(game);
 
         return game;
+    }
+
+    @ExceptionHandler(GameNotFoundException.class)
+    public final ResponseEntity<?> handleGameNotFoundException(GameNotFoundException ex) {
+        return ResponseEntity.notFound().build();
     }
 }
