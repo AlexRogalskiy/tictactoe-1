@@ -28,20 +28,22 @@ public class ApiIT {
 
     @Test
     public void startShouldFailIfNoParamsProvided() {
-        ResponseEntity<Game> response = restTemplate.postForEntity(GAMES_URL, null, Game.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(GAMES_URL, null, String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
     @Test
     public void startShouldFailForZeroDimension() {
-        ResponseEntity<Game> response = restTemplate.postForEntity(GAMES_URL, dimensionRequest(0), Game.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(GAMES_URL, dimensionRequest(0), String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+        assertThat(response.getBody(), equalTo("Invalid dimension."));
     }
 
     @Test
     public void startShouldFailForNegativeDimension() {
-        ResponseEntity<Game> response = restTemplate.postForEntity(GAMES_URL, dimensionRequest(-1), Game.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(GAMES_URL, dimensionRequest(-1), String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+        assertThat(response.getBody(), equalTo("Invalid dimension."));
     }
 
     @Test
@@ -77,8 +79,9 @@ public class ApiIT {
         assertTrue(GameUtils.indexOf(game.getBoard(), Game.O) >= 0);
         assertFalse(game.isFinished());
 
-        ResponseEntity<Game> duplicateTurnResponse = restTemplate.postForEntity(turnUrl, turnRequest, Game.class);
+        ResponseEntity<String> duplicateTurnResponse = restTemplate.postForEntity(turnUrl, turnRequest, String.class);
         assertThat(duplicateTurnResponse.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+        assertThat(duplicateTurnResponse.getBody(), equalTo("Cell is not empty."));
 
         int turn = 1;
         while (!game.isFinished()) {
@@ -98,8 +101,9 @@ public class ApiIT {
             turn++;
         }
 
-        ResponseEntity<Game> afterFinishResponse = restTemplate.postForEntity(turnUrl, turnRequest(2, 2), Game.class);
+        ResponseEntity<String> afterFinishResponse = restTemplate.postForEntity(turnUrl, turnRequest(2, 2), String.class);
         assertThat(afterFinishResponse.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+        assertThat(afterFinishResponse.getBody(), equalTo("Game is already finished."));
     }
 
     private static String gameUrl(long id) {
