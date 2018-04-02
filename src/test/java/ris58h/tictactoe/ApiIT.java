@@ -28,26 +28,26 @@ public class ApiIT {
     private static final String GAMES_URL = "/games";
 
     @Test
-    public void shouldFailForUnknownGameId() {
+    public void shouldGetErrorForUnknownGameId() {
         ResponseEntity<String> response = restTemplate.getForEntity(gameUrl(0), String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
     }
 
     @Test
-    public void startShouldFailIfNoParamsProvided() {
+    public void startShouldGetErrorIfNoParamsProvided() {
         ResponseEntity<String> response = restTemplate.postForEntity(GAMES_URL, null, String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
     @Test
-    public void startShouldFailForZeroDimension() {
+    public void startShouldGetErrorForZeroDimension() {
         ResponseEntity<String> response = restTemplate.postForEntity(GAMES_URL, dimensionRequest(0), String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
         assertThat(response.getBody(), equalTo("Invalid dimension."));
     }
 
     @Test
-    public void startShouldFailForNegativeDimension() {
+    public void startShouldGetErrorForNegativeDimension() {
         ResponseEntity<String> response = restTemplate.postForEntity(GAMES_URL, dimensionRequest(-1), String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
         assertThat(response.getBody(), equalTo("Invalid dimension."));
@@ -65,16 +65,10 @@ public class ApiIT {
     }
 
     @Test
-    public void testGame() {
-        int dimension = 3;
-
-        ResponseEntity<Game> startResponse = restTemplate.postForEntity(GAMES_URL, dimensionRequest(dimension), Game.class);
+    public void shouldGetErrorForDuplicateTurn() {
+        ResponseEntity<Game> startResponse = restTemplate.postForEntity(GAMES_URL, dimensionRequest(3), Game.class);
         assertThat(startResponse.getStatusCode(), equalTo(HttpStatus.OK));
-        Game startGame = startResponse.getBody();
-        assertThat(startGame.board.length, equalTo(9));
-        assertFalse(startGame.finished);
-
-        Long gameId = startGame.id;
+        long gameId = startResponse.getBody().id;
 
         String turnUrl = turnUrl(gameId);
         HttpEntity<?> turnRequest = turnRequest(1, 2);
@@ -89,6 +83,20 @@ public class ApiIT {
         ResponseEntity<String> duplicateTurnResponse = restTemplate.postForEntity(turnUrl, turnRequest, String.class);
         assertThat(duplicateTurnResponse.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
         assertThat(duplicateTurnResponse.getBody(), equalTo("Cell is not empty."));
+    }
+
+    @Test
+    public void testGame() {
+        int dimension = 3;
+
+        ResponseEntity<Game> startResponse = restTemplate.postForEntity(GAMES_URL, dimensionRequest(dimension), Game.class);
+        assertThat(startResponse.getStatusCode(), equalTo(HttpStatus.OK));
+        Game game = startResponse.getBody();
+        assertThat(game.board.length, equalTo(9));
+        assertFalse(game.finished);
+
+        Long gameId = game.id;
+        String turnUrl = turnUrl(gameId);
 
         int turn = 1;
         while (!game.finished) {
